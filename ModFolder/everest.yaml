@@ -4,5 +4,3 @@
   Dependencies:
     - Name: EverestCore
       Version: 1.6088.0
-    - Name: MiaoNet
-      Version: 0.4.1-alpha5
