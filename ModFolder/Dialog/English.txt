@@ -8,3 +8,7 @@ modoptions_miaonettvveaksettings_ghostnamebaking= Nametag Pre-baking
 modoptions_miaonettvveaksettings_ghostnamebaking_tip=
 	Adjust the transparency of nametag and avatar together as a single texture{n}
 	to prevent color mixing caused by the outline when adjusting opacity
+
+modoptions_miaonettvveaksettings_messagefolding= Message Folding
+modoptions_miaonettvveaksettings_messagefolding_tip=
+	Fold consecutive identical messages within 10 seconds into one "content x N" line to prevent chat spam

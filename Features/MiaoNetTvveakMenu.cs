@@ -33,6 +33,11 @@ public static class MiaoNetTvveakMenu
             nameof(settings.GhostNameBaking),
             v => settings.GhostNameBaking = v);
 
+        // --- 消息折叠 ---
+        AddFeatureToggle(menu, settings,
+            nameof(settings.MessageFolding),
+            v => settings.MessageFolding = v);
+
         menu.OnClose += () => _featureItems = null;
     }
 

@@ -23,6 +23,7 @@ public sealed class MiaoNetTvveakModule : EverestModule
 
         Logger.Log(LogLevel.Info, "MiaoNetTvveak", "Loading features...");
         SafeLoad("GhostNameBaking", GhostNameTagBaking.Load);
+        SafeLoad("MessageFolding", MessageFolding.Load);
     }
 
     public override void Unload()

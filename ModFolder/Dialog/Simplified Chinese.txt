@@ -7,3 +7,7 @@ modoptions_miaonettvveaksettings_enabled_tip=
 modoptions_miaonettvveaksettings_ghostnamebaking= 玩家名称预烘焙
 modoptions_miaonettvveaksettings_ghostnamebaking_tip=
 	将玩家名称和头像作为一整张贴图调整透明度, 防止因为描边在调整不透明度时产生混色
+
+modoptions_miaonettvveaksettings_messagefolding= 消息折叠
+modoptions_miaonettvveaksettings_messagefolding_tip=
+	将 10 秒内连续出现的相同消息折叠为一条 "内容 x N" 形式的消息, 防止刷屏
