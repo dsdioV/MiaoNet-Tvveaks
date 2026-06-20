@@ -1,0 +1,9 @@
+modoptions_miaonettvveaksettings_title= MiaoNet Tvveak
+
+modoptions_miaonettvveaksettings_enabled= 启用所有 Tweaks
+modoptions_miaonettvveaksettings_enabled_tip=
+	关闭后所有 Tweaks 都将失效
+
+modoptions_miaonettvveaksettings_ghostnamebaking= 玩家名称预烘焙
+modoptions_miaonettvveaksettings_ghostnamebaking_tip=
+	将玩家名称和头像作为一整张贴图调整透明度, 防止因为描边在调整不透明度时产生混色

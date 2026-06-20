@@ -36,6 +36,9 @@ ScaffoldingReadMe.txt
 # NuGet Symbol Packages
 *.snupkg
 
+# ModFolder output (DLL deployed by build target)
+ModFolder/Code/
+
 # Others
 ~$*
 *~

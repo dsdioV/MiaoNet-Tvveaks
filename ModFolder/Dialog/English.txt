@@ -1,0 +1,10 @@
+modoptions_miaonettvveaksettings_title= MiaoNet Tvveak
+
+modoptions_miaonettvveaksettings_enabled= Enable All Tweaks
+modoptions_miaonettvveaksettings_enabled_tip=
+	Disable to turn off all tweaks
+
+modoptions_miaonettvveaksettings_ghostnamebaking= Nametag Pre-baking
+modoptions_miaonettvveaksettings_ghostnamebaking_tip=
+	Adjust the transparency of nametag and avatar together as a single texture{n}
+	to prevent color mixing caused by the outline when adjusting opacity

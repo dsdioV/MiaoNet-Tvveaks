@@ -1,0 +1,149 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>MiaoNetTvveak</AssemblyName>
+    <RootNamespace>Celeste.Mod.MiaoNetTvveak</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- Celeste mod paths -->
+    <CelesteRootPath>C:\Program Files (x86)\Steam\steamapps\common\Celeste</CelesteRootPath>
+    <ModAssetsFolderName>ModFolder</ModAssetsFolderName>
+    <ModAssetsCopyType>link</ModAssetsCopyType>
+
+    <!-- Everest mod settings -->
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <UseCelesteAnalyzer>false</UseCelesteAnalyzer>
+    <UseCelestePublicizer>true</UseCelestePublicizer>
+
+    <!-- 不自动包含目录下所有 .cs 文件（MiaoNet 源码在子目录里） -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <!-- 手动指定我们的源文件 -->
+  <ItemGroup>
+    <Compile Include="Module/**/*.cs" />
+    <Compile Include="Features/**/*.cs" />
+  </ItemGroup>
+
+  <!-- Implicit usings for Celeste/Monocle -->
+  <ItemGroup>
+    <Using Include="Microsoft.Xna.Framework" />
+    <Using Include="Monocle" />
+    <Using Include="Celeste" />
+    <Using Include="Celeste.Mod" />
+  </ItemGroup>
+
+  <!-- Celeste assemblies + publicizer -->
+  <ItemGroup>
+    <PackageReference Include="CelesteMod.Publicizer"
+                      Version="1.1.2"
+                      CelesteAssembly="$(CelesteRootPath)/Celeste.dll"
+                      PrivateAssets="all"
+                      ExcludeAssets="runtime" />
+    <Reference Include="FNA">
+      <HintPath>$(CelesteRootPath)/FNA.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MMHOOK_Celeste">
+      <HintPath>$(CelesteRootPath)/MMHOOK_Celeste.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="YamlDotNet">
+      <HintPath>$(CelesteRootPath)/YamlDotNet.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>$(CelesteRootPath)/MonoMod.Utils.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>$(CelesteRootPath)/Mono.Cecil.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour">
+      <HintPath>$(CelesteRootPath)/MonoMod.RuntimeDetour.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MonoMod.Patcher">
+      <HintPath>$(CelesteRootPath)/MonoMod.Patcher.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Reference MiaoNet from mod cache -->
+  <ItemGroup>
+    <Reference Include="MiaoNet">
+      <HintPath>$(CelesteRootPath)/Mods/Cache/MiaoNet.MiaoNet.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- ========== Build targets (inline from CelesteMod.targets) ========== -->
+
+  <!-- After build: copy DLL to ModFolder/Code/, then deploy to Celeste mods -->
+  <Target Name="PostModBuild" AfterTargets="AfterBuild">
+    <Error Condition="'$(ModAssetsFolderName)' == ''" Text="ModAssetsFolderName is not set." Code="SMT04"/>
+
+    <!-- copy compile output files to ModFolder/Code/ -->
+    <ItemGroup>
+      <_CompileOutput Include="$(OutputPath)/**"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(_CompileOutput)"
+          DestinationFolder="$(ModAssetsFolderName)/Code/%(RecursiveDir)"
+          SkipUnchangedFiles="true"/>
+
+    <!-- create symbolic link to Celeste/Mods/ -->
+    <CallTarget Condition="$(ModAssetsCopyType) == 'link'" Targets="CheckAndCreateSymbolicLink"/>
+    <CallTarget Condition="$(ModAssetsCopyType) == 'copy'" Targets="CopyModFolder"/>
+  </Target>
+
+  <Target Name="CheckAndCreateSymbolicLink">
+    <RemoveDir Directories="$(CelesteRootPath)/Mods/$(AssemblyName)_copy"
+               Condition="Exists('$(CelesteRootPath)/Mods/$(AssemblyName)_copy')"/>
+    <PropertyGroup Condition="!Exists('$(CelesteRootPath)/Mods/$(AssemblyName)_link')">
+      <_ModLinkNotExists>true</_ModLinkNotExists>
+    </PropertyGroup>
+    <Message Condition="'$(_ModLinkNotExists)' == 'true'" Text="Symbolic link not created, creating..."/>
+    <Exec Condition="'$(_ModLinkNotExists)' == 'true' And '$(OS)' == 'Windows_NT'"
+          Command="mklink /d &quot;$(CelesteRootPath)/Mods/$(AssemblyName)_link&quot; &quot;$(MSBuildProjectDirectory)/$(ModAssetsFolderName)&quot;"/>
+    <Exec Condition="'$(_ModLinkNotExists)' == 'true' And '$(OS)' == 'Unix'"
+          Command="ln -s &quot;$(MSBuildProjectDirectory)/$(ModAssetsFolderName)&quot; &quot;$(CelesteRootPath)/Mods/$(AssemblyName)_link&quot;"/>
+  </Target>
+
+  <Target Name="CopyModFolder">
+    <ItemGroup>
+      <_ModAssetsFolderContents Include="$(ModAssetsFolderName)/**"/>
+    </ItemGroup>
+    <MakeDir Condition="!Exists('$(CelesteRootPath)/Mods/$(AssemblyName)_copy')"
+             Directories="$(CelesteRootPath)/Mods/$(AssemblyName)_copy"/>
+    <Copy SourceFiles="@(_ModAssetsFolderContents)"
+          DestinationFolder="$(CelesteRootPath)/Mods/$(AssemblyName)_copy/%(RecursiveDir)"
+          SkipUnchangedFiles="true"/>
+    <Message Text="$(AssemblyName) -> $(CelesteRootPath)/Mods/$(AssemblyName)_copy/$(AssemblyName).dll"
+             Importance="high"/>
+  </Target>
+
+  <!-- Pre-build: verify Celeste exists -->
+  <Target Name="CheckCelestePaths" BeforeTargets="PreBuildEvent">
+    <Error Condition="!Exists('$(CelesteRootPath)/Celeste.exe') And !Exists('$(CelesteRootPath)/Celeste')"
+           Text="Celeste not found. Please check your CelesteRootPath property."
+           Code="SMT01"/>
+    <Error Condition="!Exists('$(CelesteRootPath)/Celeste.Mod.mm.dll')"
+           Text="Everest not installed." Code="SMT02"/>
+  </Target>
+
+  <!-- Clean: remove built DLLs -->
+  <Target Name="CleanInplaceFolder" BeforeTargets="Clean" Condition="$(ModAssetsCopyType) == 'link'">
+    <ItemGroup>
+      <_FilesToDelete Include="$(ModAssetsFolderName)/Code/**" />
+    </ItemGroup>
+    <Delete Files="@(_FilesToDelete)" />
+  </Target>
+
+</Project>
