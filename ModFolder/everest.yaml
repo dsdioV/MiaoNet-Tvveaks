@@ -1,5 +1,5 @@
 - Name: MiaoNetTvveak
-  Version: 0.1.0
+  Version: 0.2.0
   DLL: Code/MiaoNetTvveak.dll
   Dependencies:
     - Name: EverestCore
